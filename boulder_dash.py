@@ -1,3 +1,4 @@
+
 import random
 
 
@@ -106,7 +107,40 @@ class Map:
     
     def update_map(self) -> bool:
         # проверяем карту, выполняем падение камней, алмазов...
-        # добавить срыв камней(обвал), проверять ячейки сбоку от камня, если свободна, то может сорваться (рандом)..
+        def check_side_cells(y, x):
+            left_side = [(y, x - 1), (y + 1, x - 1)]
+            right_side = [(y, x + 1), (y + 1, x + 1)]
+            result = []
+            
+            # много повторов, можно сократить..
+            
+            if (left_side[0][1] >= 0) and (left_side[1][0] < self.height):
+                y1 = left_side[0][0]
+                x1 = left_side[0][1]
+                content_1 = self.map[y1][x1].content
+                player_not_here1 = not self.map[y1][x1].player_here
+                y2 = left_side[1][0]
+                x2 = left_side[1][1]
+                content_2 = self.map[y2][x2].content
+                player_not_here2 = not self.map[y2][x2].player_here
+                if (content_1 is None) and (content_2 is None) and player_not_here1 and player_not_here2:
+                    result.append(left_side)
+            
+            if (right_side[0][1] < self.width) and (right_side[1][0] < self.height):
+                y1 = right_side[0][0]
+                x1 = right_side[0][1]
+                content_1 = self.map[y1][x1].content
+                player_not_here1 = not self.map[y1][x1].player_here
+                y2 = right_side[1][0]
+                x2 = right_side[1][1]
+                content_2 = self.map[y2][x2].content
+                player_not_here2 = not self.map[y2][x2].player_here
+                if (content_1 is None) and (content_2 is None) and player_not_here1 and player_not_here2:
+                    result.append(right_side)
+            
+            return result
+        
+        
         diffs = True
         while diffs:
             diffs = False
@@ -114,10 +148,11 @@ class Map:
                 stone_steps = 0
                 while True:
                     new_y = stone.y + 1
+                    new_x = stone.x
                     if new_y == self.height:
                         break
     
-                    if self.map[new_y][stone.x].player_here:
+                    if self.map[new_y][new_x].player_here:
                         # тут еще возможен вариант, когда камень уже летит и падает на игрока...
                         if stone_steps >= 2:
                             print("Game over!")
@@ -125,14 +160,30 @@ class Map:
                             return False
                         break
                         
-                    content_under_stone = self.map[new_y][stone.x].content
+                    # проверка возможности срыва(скатывания) камня
+                    content_under_stone = self.map[new_y][new_x].content
                     if content_under_stone is not None:
-                        break
+                        available_rockfalls = check_side_cells(stone.y, stone.x)
+                        # if available_rockfalls["available"]:
+                        if len(available_rockfalls) > 0:
+                            print("available rockfalls", available_rockfalls)
+                            # определяем: скатываться или нет
+                            falling = random.choice([True, False])
+                            if falling:
+                                # выбираем направление
+                                side = random.choice(available_rockfalls)
+                                print(side)
+                                new_x = side[0][1]
+                            else:
+                                break
+                        else:
+                            break
     
                     # move stone:
-                    self.map[new_y][stone.x].content = stone
+                    self.map[new_y][new_x].content = stone
                     self.map[stone.y][stone.x].content = None
                     stone.y = new_y
+                    stone.x = new_x
                     stone_steps += 1
                     diffs = True
         return True
@@ -247,13 +298,21 @@ map.add_stone(Stone(), 0, 9)
 map.add_stone(Stone(), 1, 3)
 map.add_stone(Stone(), 2, 5)
 map.add_ground()
-map.show()
+# map.show()
 map.map[0][4].content = None
 map.map[0][5].content = None
 map.map[0][6].content = None
 map.map[0][7].content = None
 map.map[0][8].content = None
-# map.map[0][9].content = None
+
+# map.map[2][4].content = None
+# map.map[3][4].content = None
+# map.map[4][4].content = None
+# map.map[2][6].content = None
+# map.map[3][6].content = None
+# map.map[4][6].content = None
+
+
 map.show()
 
 # for s in map.stones:
