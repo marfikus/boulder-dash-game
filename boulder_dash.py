@@ -10,13 +10,16 @@ class Map:
         self.player = None
         self.diamonds = []
         self.stones = []
-        
-        
+
+
     def show(self):
-        border = "=" * len(self.map[0]) * 3
+        border = " " + "-=-" * len(self.map[0])
         print(border)
         for y in range(self.height):
+            print("|", end="")
+            num_line = " "
             for x in range(self.width):
+                num_line += f" {x} "
                 if self.map[y][x].player_here:
                     print(" p ", end="")
                     continue
@@ -29,8 +32,9 @@ class Map:
                     print(" d ", end="")
                 elif isinstance(content, Ground):
                     print(" g ", end="")
-            print()
+            print("|", y)
         print(border)
+        print(num_line)
         
         
     def add_player(self, p):
@@ -294,10 +298,16 @@ def main():
     map.add_player(player)
     map.map[0][1].content = Ground()
     map.map[0][2].content = Diamond()
+    map.map[4][7].content = Diamond()
+    map.map[7][3].content = Diamond()
+    map.map[5][5].content = Diamond()
+    map.map[9][9].content = Diamond()
     map.add_stone(Stone(), 0, 3)
     map.add_stone(Stone(), 0, 9)
     map.add_stone(Stone(), 1, 3)
     map.add_stone(Stone(), 2, 5)
+    map.add_stone(Stone(), 4, 6)
+    map.add_stone(Stone(), 5, 1)
     map.add_ground()
     # map.show()
     map.map[0][4].content = None
