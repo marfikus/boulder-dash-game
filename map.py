@@ -79,6 +79,46 @@ class Map:
         stone.y = y
         stone.x = x
 
+
+    def add_random_object(self, obj_type="stone", nums=3, diff=2):
+        def check_coords(new_object, objects, diff):
+            for added_object in objects:
+                a = ((added_object[0] - diff) <= new_object[0] <= (added_object[0] + diff)) 
+                b = ((added_object[1] - diff) <= new_object[1] <= (added_object[1] + diff)) 
+                if a and b:
+                    return False
+            return True
+        
+        count = 0
+        objects = []
+        iteration = 0
+        ITERATIONS_LIMIT = 100
+        while count < nums:
+            y = random.randint(0, self.height - 1)
+            x = random.randint(0, self.width - 1)
+            if ((self.map[y][x].content is None) and (self.map[y][x].player_here == False)):
+                # проверка по списку уже добавленных объектов, чтобы координаты не были рядом
+                if check_coords((y, x), objects, diff):
+                    if obj_type == "stone":
+                        # self.map[y][x].content = Stone()
+                        self.add_stone(Stone(), y, x)
+                    elif obj_type == "diamond":
+                        # self.map[y][x].content = Diamond()
+                        self.add_diamond(Diamond(), y, x)
+                    else:
+                        print(f"Undefined obj_type: '{obj_type}'!")
+                        return
+
+                    objects.append((y, x))
+                    count += 1
+                    iteration = 0
+                    continue
+                    
+            iteration += 1
+            if iteration == ITERATIONS_LIMIT:
+                print("very long time, stop process")
+                return
+
     
     def remove_stone(self, stone):
         if stone not in self.stones:
