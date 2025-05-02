@@ -36,7 +36,7 @@ class Map:
                 elif isinstance(content, Diamond):
                     print(" d ", end="")
                 elif isinstance(content, Ground):
-                    print(" g ", end="")
+                    print(" - ", end="")
             print("|", y)
         print(border)
         print(num_line)

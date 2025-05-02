@@ -11,15 +11,11 @@ def start_console():
     player = Player("Nick")
     map.add_player(player)
     # map.add_stone(Stone(), 0, 3)
-    map.add_random_object("stone", nums=3, diff=2)
-    map.add_random_object("diamond", nums=3, diff=2)
+    map.add_random_object("stone", nums=5, diff=2)
+    map.add_random_object("diamond", nums=5, diff=2)
     map.add_ground()
     
-    map.map[0][4].content = None
-    map.map[0][5].content = None
-    map.map[0][6].content = None
-    map.map[0][7].content = None
-    map.map[0][8].content = None
+    # map.map[0][4].content = None
 
     map.show()
         
